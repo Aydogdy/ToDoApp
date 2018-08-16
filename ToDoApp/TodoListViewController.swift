@@ -10,10 +10,15 @@ import UIKit
 
 class TodoListViewController: UITableViewController {
 
-    let itemArray = ["Find Milk", "Buy eggos", "Destroy domogorgon", "Find Milk", "Buy eggos", "Destroy domogorgon", "Find Milk", "Buy eggos", "Destroy domogorgon", "Find Milk", "Buy eggos", "Destroy domogorgon", "Find Milk", "Buy eggos", "Destroy domogorgon", "Find Milk", "Buy eggos", "Destroy domogorgon", "Find Milk", "Buy eggos", "Destroy domogorgon", "Find Milk", "Buy eggos", "Destroy domogorgon"]
+    var itemArray = ["Find Milk", "Buy eggos", "Destroy domogorgon"]
+    let defaults = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if let items = defaults.array(forKey: "TodoListArray") as? [String] {
+            itemArray = items
+        }
     }
 
     // MARK: - Table View Datasource Methods
@@ -42,6 +47,33 @@ class TodoListViewController: UITableViewController {
         }
         
     }
+    
+    
+    // MARK: - Add new items
+    @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+        var textField = UITextField()
+        let alert = UIAlertController(title: "Add new item", message: "", preferredStyle: .alert)
+        
+        let add = UIAlertAction(title: "Add Item", style: .default) { (action) in
+            // what will happen once the user clicks the Add Item button
+            self.itemArray.append(textField.text!)
+            self.tableView.reloadData()
+            
+            self.defaults.set(self.itemArray, forKey: "TodoListArray")
+        }
+        let cancel = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+        
+        alert.addTextField { (alertInput) in
+            alertInput.placeholder = "Create new item"
+            textField = alertInput
+        }
+        alert.addAction(cancel)
+        alert.addAction(add)
+        
+        present(alert, animated: true, completion: nil)
+        
+    }
+    
 
 }
 
